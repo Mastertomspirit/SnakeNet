@@ -81,10 +81,10 @@ class GameKI {
 	        					0.85, 										//	GAMMA
 	        					1.0, 										//	ERROR CLAMP
 	        					0.01f, 										//	MIN EPSILON
-	        					500,											//	EPSILON NB STEP
+	        					500,										//	EPSILON NB STEP
 	        					true,										//	DOUBLE DQN
 	        					0.000325, 									//	L2
-	        					new Adam(0.001, 0.9, 0.99, 0.0000001),			//	UPDATER
+	        					new Adam(0.001, 0.9, 0.99, 0.0000001),		//	UPDATER
 	        					128, 										//	NUM HIDDEN NODES
 	        					3 											//	NUM LAYERS
 	        					);

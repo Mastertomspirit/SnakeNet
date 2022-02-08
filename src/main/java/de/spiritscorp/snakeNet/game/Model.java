@@ -75,8 +75,8 @@ final class Model {
 			if(snake.getFirst().getBounds().intersects(snake.get(i).getBounds()))		return false;
 		}
 		
-		if(snake.getFirst().getPosition().x - 5 < 0 || snake.getFirst().getPosition().x + 5 > Controller.GAME_WIDTH
-		   || snake.getFirst().getPosition().y - 5 < 0 || snake.getFirst().getPosition().y + 5 > Controller.GAME_HEIGHT)		return false;
+		if(snake.getFirst().getPosition().x - 10 < 0 || snake.getFirst().getPosition().x + 30 > Controller.GAME_WIDTH
+		   || snake.getFirst().getPosition().y - 10 < 0 || snake.getFirst().getPosition().y + 60 > Controller.GAME_HEIGHT)		return false;
 
 		controller.updateFrame();
 		return true;

@@ -117,7 +117,7 @@ public class GameStateUtil {
 			boolean hit = false;
 
 			for(int i = 1; i < nextMove.length; i++) {
-				if(nextMove[i].x <= 5 || nextMove[i].x + 5 >= Controller.GAME_WIDTH || nextMove[i].y <= 5 || nextMove[i].y + 5 >= Controller.GAME_HEIGHT) {
+				if(nextMove[i].x <= 10 || nextMove[i].x + 30 >= Controller.GAME_WIDTH || nextMove[i].y <= 10 || nextMove[i].y + 60 >= Controller.GAME_HEIGHT) {
 					ret += -(Vars.NEXT_STEP_NEGATIV / (i * 2.5));
 					hit = true;
 				}
@@ -153,8 +153,8 @@ public class GameStateUtil {
 			for(Snake s : snake) {
 				if(s.getPosition().equals(nextMove)) return false;
 			}
-			if(snake.getFirst().getPosition().x <= 5 || snake.getFirst().getPosition().x >= Controller.GAME_WIDTH ||
-			   snake.getFirst().getPosition().y <= 5 || snake.getFirst().getPosition().y >= Controller.GAME_HEIGHT)	return false;
+			if(snake.getFirst().getPosition().x <= 10 || snake.getFirst().getPosition().x + 30 >= Controller.GAME_WIDTH ||
+			   snake.getFirst().getPosition().y <= 10 || snake.getFirst().getPosition().y + 60 >= Controller.GAME_HEIGHT)	return false;
 		return true;
 	}
 }
