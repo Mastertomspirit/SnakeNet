@@ -35,7 +35,7 @@ public final class NetworkUtil {
     /**
      * Number of neural network inputs.
      */
-    public static final int NUMBER_OF_INPUTS = 4;
+    public static final int NUMBER_OF_INPUTS = 3;
     /**
      * Lowest value of the observation (e.g. player will die -1, nothing will happen 0, will move closer to the food 1)
      */
@@ -43,7 +43,7 @@ public final class NetworkUtil {
     /**
      * Highest value of the observation (e.g. player will die -1, nothing will happen 0, will move closer to the food 1)
      */
-    public static final double HIGH_VALUE = 18.875686507936507;
+    public static final double HIGH_VALUE = 24.53362301587302;
     
     private static Parameter param = null;
 

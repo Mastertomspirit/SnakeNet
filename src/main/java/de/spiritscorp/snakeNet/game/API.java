@@ -21,9 +21,11 @@
 package de.spiritscorp.snakeNet.game;
 
 import java.awt.Point;
+
 import de.spiritscorp.snakeNet.game.util.Direction;
 import de.spiritscorp.snakeNet.game.util.GameStateUtil;
 import de.spiritscorp.snakeNet.game.util.Vars;
+import de.spiritscorp.snakeNet.net.Action;
 import de.spiritscorp.snakeNet.net.util.GameState;
 
 public final class API {
@@ -39,23 +41,23 @@ public final class API {
 		this.controller = controller;
 	}
 	
-	public final GameState initializeGame() {
-		controller.initGame();
+	public final GameState initializeGame(boolean trainStatus, int playgroundSize) {
+		controller.initGame(trainStatus, playgroundSize);
 		gameRun = true;
-		return buildStateObservation();
+		return buildNewStateObservation(playgroundSize);
 	}
 	
-	public final void move(final Direction direction) {
+	public final void move(final Action action) {
 		stopGame++;
-		currentDirection = direction;
+		currentDirection = action.toDirection(controller.getSnake().getFirst().getPosition(), controller.getSnake().get(1).getPosition());
 		food = controller.getFood();
-		controller.setDirection(direction);
+		controller.setDirection(action.toDirection(controller.getSnake().getFirst().getPosition(), controller.getSnake().get(1).getPosition()));
 		gameRun = controller.runStep();
 		if(!gameRun) {
 			stopGame = 0;
 			score = 0;
 		}
-		if(stopGame > 10000) {
+		if(stopGame > 6000) {
 			gameRun = false;
 			score = 0;
 			stopGame = 0;
@@ -65,15 +67,8 @@ public final class API {
 			stopGame = 0;
 		}
 	}
-	
-	public final double calculateReward(final Direction direction, final Food food, final boolean gameRun) {
-		this.gameRun = gameRun;
-		currentDirection = direction;
-		this.food = food;
-		return calculateReward(direction);
-	}
 
-	public final double calculateReward(final Direction direction) {
+	public final double calculateReward() {
 		if(gameRun == false)	{
 			food = controller.getFood();
 			return Vars.REWARD_DIE;
@@ -81,18 +76,15 @@ public final class API {
 		if(!food.getPosition().equals(controller.getFood().getPosition())) return Vars.REWARD_EAT;
 		return positionNearToFood();
 	}
-	
-	public final GameState buildStateObservation() {
+		
+	public final GameState buildNewStateObservation(int playgroundSize) {
+		Point head = controller.getSnake().getFirst().getPosition();
+		Point neck = controller.getSnake().get(1).getPosition();
 		return new GameState(new double[] {
-				GameStateUtil.getStateForDirection(controller.getSnake(), controller.getFood(), Direction.UP),
-				GameStateUtil.getStateForDirection(controller.getSnake(), controller.getFood(), Direction.DOWN),
-				GameStateUtil.getStateForDirection(controller.getSnake(), controller.getFood(), Direction.LEFT),
-				GameStateUtil.getStateForDirection(controller.getSnake(), controller.getFood(), Direction.RIGHT)
+				GameStateUtil.getStateForDirection(controller.getSnake(), controller.getFood(), Action.LEFT.toDirection(head, neck), playgroundSize),
+				GameStateUtil.getStateForDirection(controller.getSnake(), controller.getFood(), Action.FORWARD.toDirection(head, neck), playgroundSize),
+				GameStateUtil.getStateForDirection(controller.getSnake(), controller.getFood(), Action.RIGHT.toDirection(head, neck), playgroundSize)
 		});
-	}
-	
-	public final boolean getGameRun() {
-		return gameRun;
 	}
 		
 	private double positionNearToFood() {
@@ -100,19 +92,13 @@ public final class API {
 		Point previousPosition = controller.getSnake().get(1).getPosition();	
 		if(currentDirection == Direction.LEFT || currentDirection == Direction.RIGHT) {
 			if(Math.abs(nextPosition.x - food.getPosition().x) < Math.abs(previousPosition.x - food.getPosition().x))	return Vars.REWARD_NEAR_TO_FOOD;
+			else if(Math.abs(nextPosition.x - food.getPosition().x) == Math.abs(previousPosition.x - food.getPosition().x)) return 0;
 			else	return Vars.REWARD_NOT_NEAR_TO_FOOD;
 		}else {
 			if(Math.abs(nextPosition.y - food.getPosition().y) < Math.abs(previousPosition.y - food.getPosition().y))	return Vars.REWARD_NEAR_TO_FOOD;
+			else if(Math.abs(nextPosition.y - food.getPosition().y) == Math.abs(previousPosition.y - food.getPosition().y)) return 0;
 			else	return Vars.REWARD_NOT_NEAR_TO_FOOD;
 		}
-	}
-
-	public final int getScore() {
-		return controller.getScore();
-	}
-
-	public final void dispose() {
-		controller.dispose();
 	}
 
 	public final String getPrintabeleParam() {
@@ -122,5 +108,17 @@ public final class API {
 			sb.append(System.lineSeparator());
 		}
 		return sb.toString();
+	}
+	
+	public final boolean getGameRun() {
+		return gameRun;
+	}
+
+	public final int getScore() {
+		return controller.getScore();
+	}
+
+	public final void dispose() {
+		controller.dispose();
 	}
 }

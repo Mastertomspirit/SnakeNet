@@ -29,16 +29,17 @@ import org.deeplearning4j.rl4j.space.ObservationSpace;
 
 import de.spiritscorp.snakeNet.Main;
 import de.spiritscorp.snakeNet.game.API;
-import de.spiritscorp.snakeNet.game.util.Direction;
 import de.spiritscorp.snakeNet.net.util.GameState;
 
 public class Environment  implements MDP<GameState, Integer, DiscreteSpace>{
 
 	private final API game;
-	private final DiscreteSpace actionSpace = new DiscreteSpace(4);
+	private final DiscreteSpace actionSpace = new DiscreteSpace(3);
+	private final int playgroundSize;
 	
-	public Environment(final API game) {
+	public Environment(final API game, final int playgroundSize) {
 		this.game = game;
+		this.playgroundSize = playgroundSize;
 	}
 
 	@Override
@@ -53,7 +54,7 @@ public class Environment  implements MDP<GameState, Integer, DiscreteSpace>{
 
 	@Override
 	public GameState reset() {
-		return game.initializeGame();
+		return game.initializeGame(true, playgroundSize);
 	}
 
 	@Override
@@ -61,12 +62,13 @@ public class Environment  implements MDP<GameState, Integer, DiscreteSpace>{
 
 	@Override
 	public StepReply<GameState> step(final Integer action) {
-		game.move(Direction.getDirection(action));
+//		System.out.println(action);
+		game.move(Action.getAction(action));
 		Main.waitMs(0);
-//		System.out.println(Arrays.toString(game.buildStateObservation().toArray()));
+//		System.out.println(Arrays.toString(game.buildNewStateObservation(playgroundSize).toArray()));
 		return new StepReply<>(
-				game.buildStateObservation(),
-				game.calculateReward(Direction.getDirection(action)),
+				game.buildNewStateObservation(playgroundSize),
+				game.calculateReward(),
 				isDone(),
 				"SnakeNet"
 				);
@@ -79,7 +81,7 @@ public class Environment  implements MDP<GameState, Integer, DiscreteSpace>{
 
 	@Override
 	public MDP<GameState, Integer, DiscreteSpace> newInstance() {
-		game.initializeGame();
-		return new Environment(game);
+		game.initializeGame(true, playgroundSize);
+		return new Environment(game, playgroundSize);
 	}
 }

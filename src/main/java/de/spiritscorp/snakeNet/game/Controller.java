@@ -45,7 +45,7 @@ public final class Controller {
 		controller = this;
 		this.param = param;
 		model = new Model(controller);
-		model.initGame();
+		model.initGame(false, Controller.GAME_WIDTH);
 		try {
 				SwingUtilities.invokeAndWait(
 					() -> {
@@ -56,7 +56,7 @@ public final class Controller {
 
 	/**
 	 * 
-	 * @return The parameter list of the neuronal net formatted as string
+	 * @return <b>String[]</b> </br>The parameter list of the neuronal net formatted as string
 	 */
 	 final String [] getPrintableParam() {
 		String updater = param.getUpdater().getClass().toString();
@@ -94,8 +94,8 @@ public final class Controller {
 		model.setDirection(direction);
 	}
 	
-	final void initGame() {
-		model.initGame();
+	final void initGame(boolean trainStatus, int playgroundSize) {
+		model.initGame(trainStatus, playgroundSize);
 	}
 	
 	final boolean runStep() {
@@ -112,5 +112,9 @@ public final class Controller {
 
 	final void dispose() {
 		view.dispose();
+	}
+
+	boolean getTrainStatus() {
+		return false;
 	}
 }

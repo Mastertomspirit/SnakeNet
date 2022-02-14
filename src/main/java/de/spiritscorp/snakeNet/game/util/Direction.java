@@ -29,7 +29,7 @@ public enum Direction{
 
 	private static final Direction[] VALUES = values();
 
-	public static Direction getDirection(Integer action) {
+	public static final Direction getDirection(Integer action) {
 		return VALUES[action];
 	}	
 }

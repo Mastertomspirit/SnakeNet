@@ -32,15 +32,15 @@ public class Vars {
 	/**
 	 * Length of the snakes view
 	 */
-	public final static int NEXT_STEP_LENGTH = 8;
+	public final static int NEXT_STEP_LENGTH = 10;
 
 	//		All values for the game state calculation 
 	public final static double SNAKE_DIE_STATE = -15.0;
 	public final static double SNAKE_EAT_STATE = 15.0;
-	public final static double SNAKE_NEAR_TO_FOOD = 1.5;
-	public final static double SNAKE_NOT_NEAR_TO_FOOD = -1.5;
-	public final static double NEXT_STEP_POSITIV = 3.37;
-	public final static double NEXT_STEP_NEGATIV = 3.76;
+	public final static double SNAKE_NEAR_TO_FOOD = 2.5;
+	public final static double SNAKE_NOT_NEAR_TO_FOOD = -2.5;
+	public final static double NEXT_STEP_POSITIV = 2.37;
+	public final static double NEXT_STEP_NEGATIV = 8.76;
 	public final static double NEXT_STEP_FOOD = 11.99;
 	
 	//		All values for the reward calculation

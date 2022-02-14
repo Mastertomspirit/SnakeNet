@@ -23,7 +23,6 @@ package de.spiritscorp.snakeNet.game.util;
 import java.awt.Point;
 import java.util.LinkedList;
 
-import de.spiritscorp.snakeNet.game.Controller;
 import de.spiritscorp.snakeNet.game.Food;
 import de.spiritscorp.snakeNet.game.Snake;
 
@@ -38,7 +37,7 @@ public class GameStateUtil {
 	 * @param direction
 	 * @return <b>double</b> </br>The values depend on what is detected in this direction
 	 */
-	public static synchronized double getStateForDirection(LinkedList<Snake> snake, Food food, Direction direction) {
+	public static synchronized double getStateForDirection(LinkedList<Snake> snake, Food food, Direction direction, int playgroundSize) {
 		Point nextMove[] = new Point[Vars.NEXT_STEP_LENGTH];
 		int bounds = 0;
 		
@@ -69,9 +68,9 @@ public class GameStateUtil {
 			break;
 		}
 
-		if(!nextMoveNotAble(snake, nextMove[0]))	return Vars.SNAKE_DIE_STATE;
+		if(!nextMoveAble(snake, nextMove[0], playgroundSize))	return Vars.SNAKE_DIE_STATE;
 
-		double nextFiveSteps = nextFiveSteps(nextMove, food.getPosition(), snake);
+		double nextFiveSteps = nextFiveSteps(nextMove, food.getPosition(), snake, playgroundSize);
 //		System.out.printf("Richtung: %s  Wert: %.5f%n", direction, nextFiveSteps);
 		
 		
@@ -112,15 +111,13 @@ public class GameStateUtil {
 	 * @param snake
 	 * @return <b>double</b> </br>The values depend on what is detected in this direction
 	 */
-	private static double nextFiveSteps(Point[] nextMove, Point food, LinkedList<Snake> snake) {
+	private static synchronized double nextFiveSteps(Point[] nextMove, Point food, LinkedList<Snake> snake, int playgroundSize) {
 			double ret = 0;
 			boolean hit = false;
 
 			for(int i = 1; i < nextMove.length; i++) {
-				if(nextMove[i].x <= 10 || nextMove[i].x + 30 >= Controller.GAME_WIDTH || nextMove[i].y <= 10 || nextMove[i].y + 60 >= Controller.GAME_HEIGHT) {
-					ret += -(Vars.NEXT_STEP_NEGATIV / (i * 2.5));
-					hit = true;
-				}
+				if(nextMove[i].x < 0 || nextMove[i].x >= playgroundSize)			return ret;
+				else if( nextMove[i].y < 0 || nextMove[i].y >= playgroundSize) 	return ret - 1;
 				else if(nextMove[i].equals(food))	{
 					ret += (Vars.NEXT_STEP_FOOD / i);
 					hit = true;
@@ -129,8 +126,7 @@ public class GameStateUtil {
 				if(!hit) {
 					for(Snake boa : snake) {
 						if(boa.getPosition().equals(nextMove[i])) {
-							ret += -(Vars.NEXT_STEP_NEGATIV / i);
-							hit = true;
+							return ret += -Vars.NEXT_STEP_NEGATIV;
 						}
 					}
 				}
@@ -149,12 +145,12 @@ public class GameStateUtil {
 	 * @param nextMove
 	 * @return <b>boolean</b> </br>true when the way is clear
 	 */
-	private static boolean nextMoveNotAble(LinkedList<Snake> snake, Point nextMove) {
+	private static synchronized boolean nextMoveAble(LinkedList<Snake> snake, Point nextMove, int playgroundSize) {
 			for(Snake s : snake) {
 				if(s.getPosition().equals(nextMove)) return false;
 			}
-			if(snake.getFirst().getPosition().x <= 10 || snake.getFirst().getPosition().x + 30 >= Controller.GAME_WIDTH ||
-			   snake.getFirst().getPosition().y <= 10 || snake.getFirst().getPosition().y + 60 >= Controller.GAME_HEIGHT)	return false;
+			if(snake.getFirst().getPosition().x < 0 || snake.getFirst().getPosition().x > playgroundSize ||
+			   snake.getFirst().getPosition().y < 0 || snake.getFirst().getPosition().y > playgroundSize)	return false;
 		return true;
 	}
 }

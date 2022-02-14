@@ -30,7 +30,8 @@ final class View extends JFrame {
 	
 	View(final Controller controller){
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setSize(Controller.GAME_WIDTH, Controller.GAME_HEIGHT);
+		setSize(Controller.GAME_WIDTH + 30, 
+				Controller.GAME_HEIGHT + 60);
 		setLocationRelativeTo(null);
 		setBackground(Color.BLACK);
 		setResizable(false);

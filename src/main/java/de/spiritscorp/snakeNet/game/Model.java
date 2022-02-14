@@ -22,6 +22,7 @@ package de.spiritscorp.snakeNet.game;
 
 import java.awt.Point;
 import java.util.LinkedList;
+import java.util.Random;
 
 import de.spiritscorp.snakeNet.game.util.Direction;
 
@@ -31,14 +32,18 @@ final class Model {
 	private LinkedList<Snake> snake;
 	private Food food;
 	private final Controller controller;
+	private boolean trainStatus = false; 
+	private int playgroundSize;
 
 	Model(final Controller controller) {
 		this.controller = controller;
 	}
 		
-	final void initGame() {
+	final void initGame(boolean trainStatus, int playgroundSize) {
 		initSnake();
-		food = createFood();
+		food = createFood(trainStatus);
+		this.playgroundSize = playgroundSize;
+		this.trainStatus = trainStatus;
 		direction = Direction.UP;
 	}
 	
@@ -67,7 +72,7 @@ final class Model {
 		snake.removeLast();
 		
 		if(snake.getFirst().getBounds().intersects(food.getBounds()))		{
-			food = createFood();
+			food = createFood(trainStatus);
 			snake.addLast(new Snake(xL, yL));
 		}
 
@@ -75,8 +80,8 @@ final class Model {
 			if(snake.getFirst().getBounds().intersects(snake.get(i).getBounds()))		return false;
 		}
 		
-		if(snake.getFirst().getPosition().x - 10 < 0 || snake.getFirst().getPosition().x + 30 > Controller.GAME_WIDTH
-		   || snake.getFirst().getPosition().y - 10 < 0 || snake.getFirst().getPosition().y + 60 > Controller.GAME_HEIGHT)		return false;
+		if(snake.getFirst().getPosition().x < 0 || snake.getFirst().getPosition().x > playgroundSize
+		   || snake.getFirst().getPosition().y < 0 || snake.getFirst().getPosition().y > playgroundSize)		return false;
 
 		controller.updateFrame();
 		return true;
@@ -97,11 +102,18 @@ final class Model {
 		return direction;
 	}
 	
-	private Food createFood() {
+	private Food createFood(boolean trainStatus) {
 		Point p = null;
 		boolean go = true;
+		if(trainStatus) {
+			int rand = new Random().nextInt();
+			if((rand % 50) == 0) {	System.out.println("Treffer"); return new Food(20,20);		}
+			if((rand % 36) == 0) {	System.out.println("Treffer"); return new Food(20, playgroundSize - 20);	}
+			if((rand % 16) == 0) {	System.out.println("Treffer"); return new Food(playgroundSize - 20, playgroundSize -20);	}
+			if((rand % 15) == 0) {	System.out.println("Treffer"); return new Food(playgroundSize - 20, 20);	}
+		}
 		do{
-			Point p1 = new Point(normalize((int)((Math.random()* (Controller.GAME_WIDTH - 40)) + 10 )), normalize((int)((Math.random()* (Controller.GAME_HEIGHT - 70)) + 10)));
+			Point p1 = new Point(normalize((int)((Math.random()* (playgroundSize - 40)) + 20 )), normalize((int)((Math.random()* (playgroundSize - 40)) + 20)));
 			
 			if(!snake.stream().anyMatch((s) -> s.getPosition().equals(p1)))		{
 				go = false;
@@ -114,9 +126,9 @@ final class Model {
 	
 	private void initSnake() {
 		snake = new LinkedList<>();
-		snake.add(new Snake((Controller.GAME_WIDTH/2) - 5, (Controller.GAME_HEIGHT / 2) - 5));
-		snake.add(new Snake((Controller.GAME_WIDTH/2) - 5, (Controller.GAME_HEIGHT / 2) - 5 + 10));
-		snake.add(new Snake((Controller.GAME_WIDTH/2) - 5, (Controller.GAME_HEIGHT / 2) - 5 + 20));
+		snake.add(new Snake((playgroundSize /2) - 5, (playgroundSize / 2) - 5));
+		snake.add(new Snake((playgroundSize /2) - 5, (playgroundSize / 2) - 5 + 10));
+		snake.add(new Snake((playgroundSize /2) - 5, (playgroundSize / 2) - 5 + 20));
 	}
 	
 	private int normalize(int coordinate) {

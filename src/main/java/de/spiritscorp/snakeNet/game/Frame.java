@@ -49,9 +49,7 @@ final class Frame extends JPanel {
 		tailBg = tail;
 		foodBg = food;
 	}
-		
-
-	
+			
 	Frame(final Controller controller){
 		this.controller = controller;
 		
